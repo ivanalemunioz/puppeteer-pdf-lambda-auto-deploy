@@ -2,7 +2,7 @@
   "name": "puppeteer-lambda-auto-deploy",
   "version": "1.0.0",
   "private": true,
-  "description": "Puppeteer auto-deploy to AWS Lambda using GitHub Actions",
+  "description": "Puppeteer Lambda auto-deploy using GitHub actions.",
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
