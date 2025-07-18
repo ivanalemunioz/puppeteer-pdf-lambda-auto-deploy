@@ -8,6 +8,15 @@ on:
   # Allows you to run this workflow manually from the Actions tab on GitHub.
   workflow_dispatch:
 
+env:
+  # Setting an environment variable with the value of a configuration variable
+  S3_BUCKET: ${{ vars.S3_BUCKET }}
+  S3_KEY: ${{ vars.S3_KEY }}
+  S3_LAYER_BUCKET: ${{ vars.S3_LAYER_BUCKET }}
+  S3_LAYER_KEY: ${{ vars.S3_LAYER_KEY }}
+  LAYER_NAME: ${{ vars.LAYER_NAME }}
+  LAMBDA_FUNCTION_NAME: ${{ vars.LAMBDA_FUNCTION_NAME }}
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
