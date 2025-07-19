@@ -15,6 +15,28 @@ module.exports.handler = async (event) => {
     body: null
   };
 
+  // Check if the BROWSER_AUTOMATIONS_ACCESS_TOKEN environment variable is set
+  // This token is required to authenticate requests to your browser automations API.
+  if (!process.env.BROWSER_AUTOMATIONS_ACCESS_TOKEN) {
+    response.statusCode = 500; // Internal Server Error
+    response.body = JSON.stringify({ message: 'BROWSER_AUTOMATIONS_ACCESS_TOKEN environment variable is not set. Please set it to enable access to the browser automations API.' });
+    return response;
+  }
+
+  // Check if the BUGLESSTACK_ACCESS_TOKEN environment variable is set
+  // If not set, the application will not be able to report errors to Buglesstack.
+  // This is a critical step for error reporting and debugging in production environments.
+  // You can set this token in your environment variables or in a .env file.
+  // If you are running this application in a development environment, you may skip this check.
+  // However, it is highly recommended to set this token in production environments
+  // to ensure that any errors that occur can be reported and addressed promptly.
+  // If you don't have a Buglesstack account, you can create one at https://app.buglesstack.com/
+  if (!process.env.BUGLESSTACK_ACCESS_TOKEN) {
+    response.statusCode = 500; // Internal Server Error
+    response.body = JSON.stringify({ message: 'BUGLESSTACK_ACCESS_TOKEN environment variable is not set. Please set it to enable error reporting.' });
+    return response;
+  }
+
   const authHeader = event.headers['authorization'] || event.headers['Authorization'];
   
   // Check authentication
