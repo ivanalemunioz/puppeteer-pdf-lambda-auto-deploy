@@ -9,7 +9,8 @@ It converts your Puppeteer project into an API that can be invoked via HTTP requ
 - [Requirements](#requirements)
 - [Development](#development)
 - [Deployment](#deployment)
-- [Variables glossary](#variables-glossary)
+- [Github Action variables glossary](#github-action-variables-glossary)
+- [Troubleshooting](#troubleshooting)
 
 # Features
 - Includes local development just doing `npm run dev` to run the Puppeteer script locally using Docker.
@@ -73,3 +74,9 @@ It converts your Puppeteer project into an API that can be invoked via HTTP requ
 - `S3_LAYER_KEY`: The key (path) in the S3 bucket where the Lambda layer package will be stored.
 - `LAYER_NAME`: The name of the Lambda layer to be created or updated.
 - `LAMBDA_FUNCTION_NAME`: The name of the Lambda function to be updated.
+
+# Troubleshooting
+- If you encounter issues with Puppeteer not launching or crashing, ensure that the Lambda function has sufficient memory allocated (at least 1024 MB is recommended).
+- Configure the Lambda function timeout to a reasonable value (e.g., 30 seconds) to allow Puppeteer enough time to execute.
+- Check the AWS Lambda logs in CloudWatch Logs for any errors or issues during execution.
+- If you encounter issues with the Github Actions workflow, check the workflow logs for any errors or issues during the build and deployment process.
