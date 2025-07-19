@@ -78,5 +78,8 @@ It converts your Puppeteer project into an API that can be invoked via HTTP requ
 # Troubleshooting
 - If you encounter issues with Puppeteer not launching or crashing, ensure that the Lambda function has sufficient memory allocated (at least 1024 MB is recommended).
 - Configure the Lambda function timeout to a reasonable value (e.g., 30 seconds) to allow Puppeteer enough time to execute.
+- Ensure your Lambda architecture is set to `x86_64`, it will not work with `arm64` architecture.
+- Ensure your Lambda and S3 bucket are in the same region.
+- Check the permissions of the IAM user to ensure it has access to S3 and Lambda.
 - Check the AWS Lambda logs in CloudWatch Logs for any errors or issues during execution.
 - If you encounter issues with the Github Actions workflow, check the workflow logs for any errors or issues during the build and deployment process.
