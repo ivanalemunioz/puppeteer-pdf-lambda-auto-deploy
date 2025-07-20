@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 // Catch a error
-module.exports = async function (error, page, browser, context, cuit, username, alias, env, completedSteps) {
+module.exports = async function (error, page, browser) {
 	const start = Date.now();
 
 	// Prepare variable store the page content
@@ -36,6 +36,10 @@ module.exports = async function (error, page, browser, context, cuit, username, 
 					'Content-Type': 'application/json'
 				}
 			});
+		}
+
+		if (browser.connected) {
+			await browser.close();
 		}
 	}
 	catch (err) {

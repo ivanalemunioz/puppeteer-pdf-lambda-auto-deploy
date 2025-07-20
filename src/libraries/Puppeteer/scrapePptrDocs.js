@@ -21,14 +21,13 @@ module.exports = async function scrapePptrDocs () {
 		links = await page.$$eval('.theme-doc-sidebar-item-category .menu__link', links => {
 			return links.map(link => ({ text: link.textContent, url: link.href }));
 		});
-	}
-	catch (error) {
-		await catchError(error, page, browser, context);
-	}
-	finally {
+
 		if (browser.connected) {
 			await browser.close();
 		}
+	}
+	catch (error) {
+		await catchError(error, page, browser);
 	}
 
 	return { sidebar_links: links };
