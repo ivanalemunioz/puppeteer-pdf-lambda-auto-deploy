@@ -40,9 +40,9 @@ module.exports.handler = async (event) => {
     return response;
   }
 
-  if (process.env.S3_BUCKET_FOR_STORAGE && (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY || !process.env.AWS_REGION) ) {
+  if (process.env.S3_BUCKET_FOR_STORAGE && (!process.env.S3_ACCESS_KEY_ID || !process.env.S3_SECRET_ACCESS_KEY || !process.env.S3_REGION) ) {
     response.statusCode = 500; // Internal Server Error
-    response.body = JSON.stringify({ message: 'AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY and AWS_REGION environment variables required if S3_BUCKET_FOR_STORAGE is set. Please set it to enable storage in S3.' });
+    response.body = JSON.stringify({ message: 'S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY and S3_REGION environment variables required if S3_BUCKET_FOR_STORAGE is set. Please set it to enable storage in S3.' });
     return response;
   }
 

@@ -1,8 +1,6 @@
 # Puppeteer AWS Lambda auto-deploy using Github actions
 
-This repo is created with the intention of being used as a base template for deploying a Puppeteer project to AWS Lambda using Github actions.
-
-It converts your Puppeteer project into an API that can be invoked via HTTP requests, allowing you to run Puppeteer scripts in a serverless environment.
+This repo is created with the intention of being used as a base template for deploying an API to generate PDFs using Puppeteer with auto-deploy to AWS Lambda using Github actions.
 
 # Table of Contents
 - [Features](#features)
@@ -17,8 +15,9 @@ It converts your Puppeteer project into an API that can be invoked via HTTP requ
 - Automatically deploys your Puppeteer project to AWS Lambda when you push changes to the `main` branch.
 - Uses AWS Lambda Layers to include Puppeteer and its dependencies, reducing the size of the Lambda function package.
 - Configurable via environment variables and Github secrets.
-- Includes a sample Puppeteer script to demonstrate functionality.
 - Integration to [Buglesstack](https://buglesstack.com/) for error tracking and monitoring.
+- Includes an endpoint to generate a PDF from HTML
+- Automatic upload to s3 or return the PDF as response
 
 # Requirements
 - AWS account with access to Lambda and S3.
@@ -37,14 +36,17 @@ It converts your Puppeteer project into an API that can be invoked via HTTP requ
    ```bash
    npm run dev
    ```
-5. Test the API by sending a POST request to `http://localhost:5123/v1/run` using a tool like Postman or curl. You should see the Puppeteer script running and returning a response.
+5. Test the API by sending a POST request to `http://localhost:5124/v1/pdf/html` using a tool like Postman or curl. You should see the Puppeteer script running and returning a response.
+
+    You can set the "options" parameter using the options from https://pptr.dev/api/puppeteer.pdfoptions
     ```bash
-    curl --location 'http://localhost:5123/v1/run' \
+    curl --location 'http://localhost:5124/v1/pdf/html' \
     --header 'Content-Type: application/json' \
     --header 'Authorization: Bearer YOUR_GENERATED_AUTH_TOKEN' \
     --data '{
-        "action": "scrape-pptr-docs",
-        "params": {}
+        "html": "<p style='\''text-align:center'\''>Hello World! <b>This PDF was created using <a href='\''https://github.com/ivanalemunioz/puppeteer-pdf-lambda-auto-deploy'\''>https://github.com/ivanalemunioz/puppeteer-pdf-lambda-auto-deploy</a></b></p>",
+        "file_name": "Test PDF file",
+        "options" : {}
     }'
     ```
 
@@ -52,15 +54,17 @@ It converts your Puppeteer project into an API that can be invoked via HTTP requ
 1. Configure the `AWS_ACCESS_KEY_ID`,  `AWS_SECRET_ACCESS_KEY`, and `AWS_REGION` secrets in your Github repository settings under `Settings > Secrets and variables > Actions > Secrets`.
 2. Configure the `S3_BUCKET`, `S3_KEY`, `S3_LAYER_BUCKET`, `S3_LAYER_KEY`, `LAYER_NAME`, and `LAMBDA_FUNCTION_NAME` environment variables in your Github repository settings under `Settings > Secrets and variables > Actions > Variables`.
 3. Don't forget to activate `Allow all actions and reusable workflows` in your repository settings under `Settings > Actions > General > Actions permissions`.
-4. Push your changes to the `main` branch. The Github Actions workflow will automatically build and deploy your Puppeteer project to AWS Lambda.
-5. Test the API by sending a POST request to `https://YOUR_LAMBDA_URL/v1/run` using a tool like Postman or curl. You should see the Puppeteer script running and returning a response.
+4. Configure the Lambda environment variables. You can get more info about the required vars in the `.env.example` file.
+5. Push your changes to the `main` branch. The Github Actions workflow will automatically build and deploy your Puppeteer project to AWS Lambda.
+6. Test the API by sending a POST request to `https://YOUR_LAMBDA_URL/v1/pdf/html` using a tool like Postman or curl. You should see the Puppeteer script running and returning a response.
     ```bash
-    curl --location 'https://YOUR_LAMBDA_URL/v1/run' \
+    curl --location 'https://YOUR_LAMBDA_URL/v1/pdf/html' \
     --header 'Content-Type: application/json' \
     --header 'Authorization: Bearer YOUR_GENERATED_AUTH_TOKEN' \
     --data '{
-        "action": "scrape-pptr-docs",
-        "params": {}
+        "html": "<p style='\''text-align:center'\''>Hello World! <b>This PDF was created using <a href='\''https://github.com/ivanalemunioz/puppeteer-pdf-lambda-auto-deploy'\''>https://github.com/ivanalemunioz/puppeteer-pdf-lambda-auto-deploy</a></b></p>",
+        "file_name": "Test PDF file",
+        "options" : {}
     }'
     ```
 
