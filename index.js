@@ -56,12 +56,12 @@ if (process.env.ENV === 'dev') {
         });
 
         // Start the fastify server
-        fastify.listen({ port: 5123 }, (err) => {
+        fastify.listen({ port: 5124 }, (err) => {
             if (err) {
                 process.exit(1);
             }
 
-            console.log(`Server listening on http://localhost:5123`);
+            console.log(`Server listening on http://localhost:5124`);
         });
     })();
 

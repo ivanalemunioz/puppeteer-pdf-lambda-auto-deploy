@@ -1,11 +1,14 @@
-const scrapePptrDocs = require('../Puppeteer/scrapePptrDocs.js');
+const { uploadPDF } = require('../AmazonS3/index.js');
+const pdfFromHTML = require('../Puppeteer/pdfFromHTML.js');
 
 // Available actions mapping
 const availableActions = {
-  'scrape-pptr-docs': scrapePptrDocs,
+  '/v1/pdf/html': pdfFromHTML,
 };
 
 module.exports.handler = async (event) => {
+  const start = Date.now();
+
   // Initialize response object
   const response = {
     statusCode: 200,
@@ -37,6 +40,12 @@ module.exports.handler = async (event) => {
     return response;
   }
 
+  if (process.env.S3_BUCKET_FOR_STORAGE && (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY || !process.env.AWS_REGION) ) {
+    response.statusCode = 500; // Internal Server Error
+    response.body = JSON.stringify({ message: 'AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY and AWS_REGION environment variables required if S3_BUCKET_FOR_STORAGE is set. Please set it to enable storage in S3.' });
+    return response;
+  }
+
   const authHeader = event.headers['authorization'] || event.headers['Authorization'];
   
   // Check authentication
@@ -53,8 +62,8 @@ module.exports.handler = async (event) => {
     return response;
   }
 
-  // Check if the request path is '/v1/run'
-  if (event.rawPath !== '/v1/run') {
+  // Check if the path matches the expected endpoint
+  if (!availableActions[event.rawPath]) {
     response.statusCode = 404; // Not Found
     response.body = JSON.stringify({ message: 'Not Found' });
     return response;
@@ -64,22 +73,40 @@ module.exports.handler = async (event) => {
   event.body = JSON.parse(event.body);
   event.body = event.body || {};
 
-  // Check if the action is provided in the body
-  if (!availableActions[event.body.action]) {
-    response.statusCode = 400; // Bad Request
-    response.body = JSON.stringify({ message: 'Invalid action' });
-    return response;
-  }
-
   // Get the action function based on the provided action
-  const actionFunction = availableActions[event.body.action];
+  const actionFunction = availableActions[event.rawPath];
 
   try {
     // Execute the action function with the provided parameters
     // If no parameters are provided, an empty object is passed
-    const result = await actionFunction(event.body.params || {});
+    const pdf = await actionFunction(event.body);
 
-    response.body = JSON.stringify(result);
+    // Location
+    uploadPDF
+
+    // Upload to S3 if required
+    if (process.env.S3_BUCKET_FOR_STORAGE) {
+      const url = await uploadPDF(pdf);
+      
+      response.body = JSON.stringify({ 
+        url,
+        milliseconds_taken: (Date.now() - start),
+        bites_size: pdf.length
+      });
+    }
+    else {
+      response.headers['Content-Type'] = 'application/pdf';
+      response.headers['Content-Disposition'] = `inline; filename="${event.body.file_name || 'output'}.pdf"`; // Set Content-Disposition header for inline display
+      
+      // Set the response body based on the environment
+      if (process.env.ENV === 'dev') {
+        response.body = pdf; // In development, return the PDF buffer directly
+      }
+      else {
+        response.body = pdf.toString('base64'); // Convert PDF buffer to base64 string for JSON response
+        response.isBase64Encoded = true; // Indicate that the response body is base64
+      }
+    }
   } catch (error) {
     // Log the error to the console for debugging
     // You can watch Lambda logs in AWS CloudWatch
