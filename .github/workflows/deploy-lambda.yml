@@ -76,7 +76,9 @@ jobs:
         # LAYER_NAME=
         # LAMBDA_FUNCTION_NAME=
 
-        if [[ -z $(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} package.json) ]]; then
+        echo "Before commit: ${{ github.event.before }}"
+
+        if [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ] || [[ -z $(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} package.json) ]]; then
           echo "No updates to package.json, layer update not required."
         else
           # Create a temporary directory for the layer
