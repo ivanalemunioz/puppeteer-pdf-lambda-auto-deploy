@@ -2,7 +2,7 @@
   "name": "puppeteer-pdf-lambda-auto-deploy",
   "version": "1.0.0",
   "private": true,
-  "description": "PDF generator API using Puppeteer with auto-deploy to AWS Lambda using Github actions.",
+  "description": "PDF generator API using Puppeteer with auto-deploy to AWS Lambda using Github actions",
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
