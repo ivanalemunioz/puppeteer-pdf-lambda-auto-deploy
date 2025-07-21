@@ -57,6 +57,8 @@ This repo is created with the intention of being used as a base template for dep
 4. Configure the Lambda environment variables. You can get more info about the required vars in the `.env.example` file.
 5. Push your changes to the `main` branch. The Github Actions workflow will automatically build and deploy your Puppeteer project to AWS Lambda.
 6. Test the API by sending a POST request to `https://YOUR_LAMBDA_URL/v1/pdf/html` using a tool like Postman or curl. You should see the Puppeteer script running and returning a response.
+
+    You can set the "options" parameter using the options from https://pptr.dev/api/puppeteer.pdfoptions
     ```bash
     curl --location 'https://YOUR_LAMBDA_URL/v1/pdf/html' \
     --header 'Content-Type: application/json' \
