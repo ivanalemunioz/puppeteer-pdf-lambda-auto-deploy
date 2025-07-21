@@ -48,11 +48,6 @@ jobs:
       # This step will zip the repository and upload it to S3, 
       # then update the Lambda function code
       run: |
-        # Constants optionally you can define these here
-        # S3_BUCKET=
-        # S3_KEY=
-        # LAMBDA_FUNCTION_NAME=
-
         # Zip the repo
         zip -r updated_lambda.zip .
         
@@ -70,15 +65,10 @@ jobs:
       # This step will check if package.json has changed,
       # and if so, it will update the Lambda layer with the new dependencies
       run: |
-        # Constants optionally you can define these here
-        # S3_LAYER_BUCKET=
-        # S3_LAYER_KEY=
-        # LAYER_NAME=
-        # LAMBDA_FUNCTION_NAME=
+        # Layer commit is stored in the layer description
+        OLD_LAYER_COMMIT=$(aws lambda list-layer-versions --layer-name $LAYER_NAME --query 'LayerVersions[0].Description' --output text)
 
-        echo "Before commit: ${{ github.event.before }}"
-
-        if [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ] && [[ -z $(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} package.json) ]]; then
+        if [ git rev-parse --verify --quiet "$OLD_LAYER_COMMIT" >/dev/null ] && [[ -z $(git diff --name-only $OLD_LAYER_COMMIT ${{ github.event.after }} package.json) ]]; then
           echo "No updates to package.json, layer update not required."
         else
           # Create a temporary directory for the layer
@@ -102,7 +92,7 @@ jobs:
 
           # Update Lambda layer
           echo "Updating Lambda layer..."
-          aws lambda publish-layer-version --layer-name $LAYER_NAME  --content S3Bucket=$S3_LAYER_BUCKET,S3Key=$S3_LAYER_KEY
+          aws lambda publish-layer-version --layer-name $LAYER_NAME --description ${{ github.event.after }} --content S3Bucket=$S3_LAYER_BUCKET,S3Key=$S3_LAYER_KEY
 
           # Update the Lambda function to use the new layer version
           echo "Updating Lambda function to use the new layer version..."
