@@ -103,7 +103,14 @@ module.exports.handler = async (event) => {
         response.body = pdf; // In development, return the PDF buffer directly
       }
       else {
-        response.body = pdf; // Convert PDF buffer to base64 string for JSON response
+        // const asciiDecoder = new TextDecoder('utf-8');
+        // const data = ;
+        // response.body =asciiDecoder.decode(YourArray);
+
+        // Buffer.from(file.buffer,0,file.buffer.length);
+        response.body = Buffer.from(pdf).toString('base64');
+
+        // response.body = pdf; // Convert PDF buffer to base64 string for JSON response
         response.isBase64Encoded = true; // Indicate that the response body is base64
       }
     }
