@@ -66,9 +66,11 @@ jobs:
       # and if so, it will update the Lambda layer with the new dependencies
       run: |
         # Layer commit is stored in the layer description
-        OLD_LAYER_COMMIT=$(aws lambda list-layer-versions --layer-name $LAYER_NAME --query 'LayerVersions[0].Description' --output text)
+        CURRENT_LAYER_COMMIT=$(aws lambda list-layer-versions --layer-name $LAYER_NAME --query 'LayerVersions[0].Description' --output text)
 
-        if [ git rev-parse --verify --quiet "$OLD_LAYER_COMMIT" >/dev/null ] && [[ -z $(git diff --name-only $OLD_LAYER_COMMIT ${{ github.event.after }} package.json) ]]; then
+        echo "Current layer commit: $CURRENT_LAYER_COMMIT"
+        
+        if git rev-parse --verify --quiet "$CURRENT_LAYER_COMMIT" >/dev/null && [[ -z $(git diff --name-only $CURRENT_LAYER_COMMIT ${{ github.event.after }} package.json) ]]; then
           echo "No updates to package.json, layer update not required."
         else
           # Create a temporary directory for the layer
