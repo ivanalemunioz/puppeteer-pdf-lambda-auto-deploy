@@ -96,7 +96,7 @@ module.exports.handler = async (event) => {
     }
     else {
       response.headers['Content-Type'] = 'application/pdf';
-      response.headers['Content-Disposition'] = `inline; filename="${event.body.file_name || 'output'}.pdf"`; // Set Content-Disposition header for inline display
+      response.headers['Content-Disposition'] = `filename="${event.body.file_name || 'output'}.pdf"`; // Set Content-Disposition header for inline display
       
       // Set the response body based on the environment
       if (process.env.ENV === 'dev') {
