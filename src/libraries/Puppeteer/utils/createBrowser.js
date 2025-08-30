@@ -15,7 +15,7 @@ let fontLoaded = false;
 // Create browser
 module.exports = async function () {
 	if (!fontLoaded) {
-		await chromium.font("/opt/fonts/intel_one_mono.ttf");
+		await chromium.font("/var/task/src/libraries/Puppeteer/fonts/intel_one_mono.ttf");
 	}
 
 	// Create browser
