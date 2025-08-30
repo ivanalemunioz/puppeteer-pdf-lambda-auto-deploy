@@ -20,9 +20,9 @@ module.exports = async function () {
 			puppeteer = await import('puppeteer-core');
 			chromium = (await import('@sparticuz/chromium')).default;
 
-			await cp('/var/task/src/libraries/Puppeteer/fonts', '/tmp/.fonts', { recursive: true});
+			await cp('/var/task/src/libraries/Puppeteer/fonts', '/tmp/fonts', { recursive: true});
 
-			await chromium.font("/tmp/.fonts/intel_one_mono.ttf");
+			await chromium.font("/tmp/fonts/intel_one_mono.ttf");
 		}
 
 		browserLoaded = true;
