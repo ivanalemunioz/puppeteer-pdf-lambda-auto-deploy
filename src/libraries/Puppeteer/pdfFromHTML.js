@@ -16,6 +16,8 @@ module.exports = async function pdfFromHTML ({ html, options = {} }) {
 		// Put the HTML content into the page
 		await page.setContent(html, { waitUntil: 'load' });
 
+		await page.evaluateHandle('document.fonts.ready');
+
 		// Set default options
 		options.width = options.width || '8.27in';
 		options.height = options.height || '11.69in';
