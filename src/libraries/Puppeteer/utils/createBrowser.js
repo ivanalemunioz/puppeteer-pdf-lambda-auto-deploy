@@ -1,4 +1,5 @@
 const isDev = process.env.ENV === 'dev';
+const { cp } = require('fs').promises; // For the promise-based asynchronous version
 
 /** @type {import('puppeteer')} */
 let puppeteer;
@@ -18,7 +19,10 @@ module.exports = async function () {
 		else {
 			puppeteer = await import('puppeteer-core');
 			chromium = (await import('@sparticuz/chromium')).default;
-			await chromium.font("/var/task/src/libraries/Puppeteer/fonts/intel_one_mono.ttf");
+
+			await cp('/var/task/src/libraries/Puppeteer/fonts', '/tmp/.fonts', { recursive: true});
+
+			await chromium.font("/tmp/.fonts/intel_one_mono.ttf");
 		}
 
 		browserLoaded = true;
