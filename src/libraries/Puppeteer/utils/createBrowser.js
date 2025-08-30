@@ -10,8 +10,14 @@ if (isDev) {
 const chromium = require('@sparticuz/chromium').default;
 
 
+let fontLoaded = false;
+
 // Create browser
 module.exports = async function () {
+	if (!fontLoaded) {
+		await chromium.font("/var/task/src/libraries/Puppeteer/fonts/intel_one_mono.ttf");
+	}
+
 	// Create browser
 	const browser = await puppeteer.launch({
 		args: (isDev ? puppeteer.defaultArgs() : chromium.args).concat([
