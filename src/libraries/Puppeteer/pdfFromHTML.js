@@ -18,6 +18,8 @@ module.exports = async function pdfFromHTML ({ html, options = {} }) {
 
 		await page.evaluateHandle('document.fonts.ready');
 
+		await new Promise(resolve => setTimeout(resolve, 5000));
+
 		// Set default options
 		options.width = options.width || '8.27in';
 		options.height = options.height || '11.69in';
