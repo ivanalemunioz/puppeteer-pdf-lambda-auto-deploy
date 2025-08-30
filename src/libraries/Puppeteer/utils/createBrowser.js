@@ -1,21 +1,27 @@
 const isDev = process.env.ENV === 'dev';
 
-let puppeteer = require('puppeteer-core').default;
+/** @type {import('puppeteer')} */
+let puppeteer;
 
-// Import puppeteer-core and chromium for production, puppeteer for development
-if (isDev) {
-	puppeteer = require('puppeteer').default;
-}
+/** @type {import('@sparticuz/chromium').default} */
+let chromium;
 
-const chromium = require('@sparticuz/chromium').default;
-
-
-let fontLoaded = false;
+let browserLoaded = false;
 
 // Create browser
 module.exports = async function () {
-	if (!fontLoaded) {
-		await chromium.font("/var/task/src/libraries/Puppeteer/fonts/intel_one_mono.ttf");
+	if (!browserLoaded) {
+		// Import puppeteer-core and chromium for production, puppeteer for development
+		if (isDev) {
+			puppeteer = await import('puppeteer');
+		}
+		else {
+			puppeteer = await import('puppeteer-core');
+			chromium = (await import('@sparticuz/chromium')).default;
+			await chromium.font("/var/task/src/libraries/Puppeteer/fonts/intel_one_mono.ttf");
+		}
+
+		browserLoaded = true;
 	}
 
 	// Create browser
